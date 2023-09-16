@@ -3,8 +3,7 @@ Shows a real-time map of free classrooms. Useful e.g. working on group assignmen
 
 ```mermaid
 graph TD;
-    A-->B;
-    A-->C;
-    B-->D;
-    C-->D;
+    VAMK-Vapaana-->Room finder;
+    VAMK-Vapaana-->Availability finder;
+    Room finder-->Event finder;
 ```
