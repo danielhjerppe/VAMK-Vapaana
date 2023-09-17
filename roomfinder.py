@@ -17,7 +17,7 @@ def room_search(session):
     }
     response = session.request("POST", url, json=payload, headers=session.headers, verify=False)
     data = json.loads(response.text)
-    sorted_data = sorted(data, key=lambda x: x['class']) # Sort the data based on the "class" key
+    sorted_data = sorted(data, key=lambda x: x['class'])  # Sort the data based on the "class" key
     with open(f"{search_term}-rooms.json", "w") as json_file:
         json.dump(sorted_data, json_file, indent=5)
 
