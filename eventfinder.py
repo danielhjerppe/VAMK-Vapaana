@@ -59,8 +59,8 @@ def clean_events(today_date):
 def main():
     today_date = datetime.now().strftime("%Y-%m-%d")
     tomorrow_date = (datetime.now() + timedelta(days=1)).strftime("%Y-%m-%d")
-    today_date = "2023-09-18"  # TESTING
-    tomorrow_date = "2023-09-19"  # TESTING
+    #today_date = "2023-09-18"  # TESTING
+    #tomorrow_date = "2023-09-19"  # TESTING
 
     urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
     url = "https://lukkarit.vamk.fi/rest/user"
