@@ -1,5 +1,5 @@
 # VAMK: Vapaana
-Shows a real-time map of free classrooms. Useful e.g. working on group assignments at campus.
+Shows a real-time map of free classrooms. Useful e.g. when working on group assignments at campus.
 
 Consists of three parts:
 1. **roomfinder** 
