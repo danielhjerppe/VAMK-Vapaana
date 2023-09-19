@@ -9,10 +9,7 @@ def check_room_availability(time_now, today_date):
     availability_now = []
 
     for event in event_data:
-        avail_dict = {"class": "", "available": ""}
-        print(f"Room: {event['class']} ", end="\t")
-        avail_dict["class"] = event["class"]
-        print(f'{len(event["start"])} event(s)', end="\t")
+        avail_dict = {"class": event["class"], "available": "", "number_of_events": len(event["start"])}
         available = True
         avail_dict["available"] = available
         if len(event["start"]) > 0:
@@ -22,16 +19,21 @@ def check_room_availability(time_now, today_date):
                 if starttime < datetime.strptime(time_now, "%Y-%m-%d %H:%M") < endtime:
                     available = False
                     avail_dict["available"] = available
-        if available:
-            print("\033[92m", end="")  # Green
-        else:
-            print("\033[91m", end="")  # Red
-        print(f"{available = }", end="")
-        print("\033[0m")
+
         availability_now.append(avail_dict)
     return availability_now
 
 
+def print_to_terminal(rooms_available):
+    for room_availability in rooms_available:
+        print(f"Room: {room_availability['class']} ", end="\t")
+        print(f"{room_availability['number_of_events']} event(s)", end="\t")
+        if room_availability['available']:
+            print("\033[92m", end="")  # Green
+        else:
+            print("\033[91m", end="")  # Red
+        print(f"Available: {room_availability['available']}", end="")
+        print("\033[0m")
 
 def main():
     time_now = datetime.now().strftime("%Y-%m-%d %H:%M")
@@ -42,7 +44,9 @@ def main():
     print(f"{time_now = }\n")
 
     rooms_available = check_room_availability(time_now, today_date)
-    print(rooms_available)
+    print_to_terminal(rooms_available)
+
+
 
 
 if __name__ == "__main__":
