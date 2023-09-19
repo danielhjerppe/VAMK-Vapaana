@@ -1,5 +1,5 @@
 # VAMK: Vapaana
-Shows a real-time map of free classrooms. Useful e.g. working on group assignments at campus.
+Shows a real-time map of free classrooms. Useful e.g. when working on group assignments at campus.
 
 Consists of three parts:
 1. **roomfinder** 
@@ -14,6 +14,6 @@ Consists of three parts:
 * The "real-time" component of the program
 
 
-To do:
-* Web GUI
-
+**Work in progress:**
+* Multiplatform GUI
+![](/images/Screenshot%202023-09-19%20at%2016.30.06.png)
