@@ -6,7 +6,7 @@ import time
 import urllib3
 
 
-def add_rooms(session) -> None:
+def add_rooms(session: requests.Session) -> None:
     url = "https://lukkarit.vamk.fi/rest/basket/0/location"
     with open("Wolffintie-rooms.json", "r") as rooms_file:
         room_data = json.load(rooms_file)
