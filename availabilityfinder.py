@@ -2,7 +2,7 @@ import json
 from datetime import datetime
 
 
-def check_room_availability(time_now, today_date):
+def check_room_availability(time_now: str, today_date: str) -> list:
     with open(f"{today_date}_clean_events.json", "r") as events_file:
         event_data = json.load(events_file)
 
@@ -24,7 +24,7 @@ def check_room_availability(time_now, today_date):
     return availability_now
 
 
-def print_to_terminal(rooms_available):
+def print_to_terminal(rooms_available: list) -> None:
     for room_availability in rooms_available:
         print(f"{room_availability['floor']}", end="")
         print(f"{room_availability['wing']}", end="\t")
@@ -38,7 +38,7 @@ def print_to_terminal(rooms_available):
         print("\033[0m")
 
 
-def which_floor(event):
+def which_floor(event: dict) -> int | str:
     if event["class"][1] == "1":
         return 1
     elif event["class"][1] == "2":
@@ -49,7 +49,7 @@ def which_floor(event):
         return ""
 
 
-def which_wing(event):
+def which_wing(event: dict) -> str:
     if event["class"][0] == "A":
         return "A"
     elif event["class"][0] == "B":

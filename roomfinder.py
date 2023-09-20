@@ -2,7 +2,7 @@ import requests
 import json
 
 
-def room_search(session):
+def room_search(session: requests.Session) -> None:
     """Based on 'search_term', prints a list of rooms to a .json file. """
     url = "https://lukkarit.vamk.fi/rest/locations"
     search_term = "Wolffintie"

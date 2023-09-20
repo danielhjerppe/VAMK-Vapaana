@@ -6,7 +6,7 @@ import time
 import urllib3
 
 
-def add_rooms(session):
+def add_rooms(session) -> None:
     url = "https://lukkarit.vamk.fi/rest/basket/0/location"
     with open("Wolffintie-rooms.json", "r") as rooms_file:
         room_data = json.load(rooms_file)
@@ -17,7 +17,7 @@ def add_rooms(session):
         time.sleep(0.1)
 
 
-def read_events(session, today_date, tomorrow_date):
+def read_events(session: requests.Session, today_date: str, tomorrow_date: str) -> None:
     url = "https://lukkarit.vamk.fi/rest/basket/0/events"
     payload = {
         "dateFrom": f"{today_date}",
@@ -30,7 +30,7 @@ def read_events(session, today_date, tomorrow_date):
         json.dump(data, json_file, indent=5)
 
 
-def clean_events(today_date):
+def clean_events(today_date: str) -> None:
     with open(f"{today_date}_events.json", "r") as event_file:
         event_data = json.load(event_file)
     with open("Wolffintie-rooms.json", "r") as room_file:
