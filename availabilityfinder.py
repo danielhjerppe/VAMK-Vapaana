@@ -3,24 +3,31 @@ from datetime import datetime
 
 
 def check_room_availability(time_now: str, today_date: str) -> list[dict]:
-    with open(f"{today_date}_clean_events.json", "r") as events_file:
-        event_data = json.load(events_file)
+    try:
+        with open(f"{today_date}_clean_events.json", "r") as events_file:
+            event_data = json.load(events_file)
+    except FileNotFoundError:
+        print(f"eventfinder.py has not been run for {today_date}")
+
 
     availability_now = []
 
-    for event in event_data:
-        available = True
-        avail_dict = {"class": event["class"], "available": available, "number_of_events": len(event["start"]),
-                      "floor": which_floor(event), "wing": which_wing(event)}
-        if len(event["start"]) > 0:
-            for i in range(len(event["start"])):
-                starttime = datetime.strptime(event["start"][i], "%Y-%m-%d %H:%M")
-                endtime = datetime.strptime(event["end"][i], "%Y-%m-%d %H:%M")
-                if starttime < datetime.strptime(time_now, "%Y-%m-%d %H:%M") < endtime:
-                    available = False
-                    avail_dict["available"] = available
+    try:
+        for event in event_data:
+            available = True
+            avail_dict = {"class": event["class"], "available": available, "number_of_events": len(event["start"]),
+                          "floor": which_floor(event), "wing": which_wing(event)}
+            if len(event["start"]) > 0:
+                for i in range(len(event["start"])):
+                    starttime = datetime.strptime(event["start"][i], "%Y-%m-%d %H:%M")
+                    endtime = datetime.strptime(event["end"][i], "%Y-%m-%d %H:%M")
+                    if starttime < datetime.strptime(time_now, "%Y-%m-%d %H:%M") < endtime:
+                        available = False
+                        avail_dict["available"] = available
 
-        availability_now.append(avail_dict)
+            availability_now.append(avail_dict)
+    except UnboundLocalError:
+        pass
     return availability_now
 
 
