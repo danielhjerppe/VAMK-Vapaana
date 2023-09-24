@@ -6,6 +6,30 @@ import time
 import urllib3
 
 
+def setup_session() -> requests.Session:
+    urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+    custom_headers = {
+        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:109.0) Gecko/20100101 Firefox/117.0",
+        "Accept": "application/json, text/plain, */*"
+    }
+    session = requests.Session()
+    session.headers.update(custom_headers)
+    return session
+
+
+def get_cookies(session: requests.Session) -> bool:
+    url = "https://lukkarit.vamk.fi/rest/user"
+    response = session.get(url, verify=False)
+    if response.status_code == 200:
+        print(f"Connection ok! {response.status_code = }")
+        csrf_token = "PHPSESSID=" + session.cookies.get_dict()["PHPSESSID"]
+        print(f"Cookie: {csrf_token}")
+        return True
+    else:
+        print(f"Error. Check connection. {response.status_code = }")
+        return False
+
+
 def add_rooms(session: requests.Session) -> None:
     url = "https://lukkarit.vamk.fi/rest/basket/0/location"
     with open("Wolffintie-rooms.json", "r") as rooms_file:
@@ -13,7 +37,9 @@ def add_rooms(session: requests.Session) -> None:
     for i in range(len(room_data)):  # Restrict amount of rooms for testing
         room_data[i]["adding"] = True
         print(f"Adding room {i+1} of {len(room_data)}. Payload = {room_data[i]}")
-        session.request("POST", url, json=room_data[i], headers=session.headers, verify=False)
+        response = session.request("POST", url, json=room_data[i], headers=session.headers, verify=False)
+        # Implement a check if returned locations is empty
+        print(f"{response.status_code = }")
         time.sleep(0.1)
 
 
@@ -25,9 +51,12 @@ def read_events(session: requests.Session, today_date: str, tomorrow_date: str) 
         "eventType": "visible"
     }
     response = session.request("POST", url, json=payload, headers=session.headers, verify=False)
-    data = json.loads(response.text)
-    with open(f"{today_date}_events.json", "w") as json_file:
-        json.dump(data, json_file, indent=5)
+    try:
+        data = json.loads(response.text)
+        with open(f"{today_date}_events.json", "w") as json_file:
+            json.dump(data, json_file, indent=5)
+    except json.decoder.JSONDecodeError:
+        print(f"No events found for {today_date}.")
 
 
 def clean_events(today_date: str) -> None:
@@ -59,26 +88,18 @@ def clean_events(today_date: str) -> None:
 def main():
     today_date = datetime.now().strftime("%Y-%m-%d")
     tomorrow_date = (datetime.now() + timedelta(days=1)).strftime("%Y-%m-%d")
-    #today_date = "2023-09-18"  # TESTING
-    #tomorrow_date = "2023-09-19"  # TESTING
+    """Testing overrides"""
+    #today_date = "2023-09-24"
+    #tomorrow_date = "2023-09-25"
 
-    urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-    url = "https://lukkarit.vamk.fi/rest/user"
-    custom_headers = {
-        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:109.0) Gecko/20100101 Firefox/117.0",
-        "Accept": "application/json, text/plain, */*"
-    }
-    session = requests.Session()
-    session.headers.update(custom_headers)
-    response = session.get(url, verify=False)
-    if response.status_code == 200:
-        print("Connection ok! Continuing")
-    csrf_token = "PHPSESSID=" + session.cookies.get_dict()["PHPSESSID"]
-    print(f"Cooke: {csrf_token}\n")
-
-    add_rooms(session)
-    read_events(session, today_date, tomorrow_date)
-    clean_events(today_date)
+    session = setup_session()
+    if get_cookies(session):
+        add_rooms(session)
+        read_events(session, today_date, tomorrow_date)
+        try:
+            clean_events(today_date)
+        except FileNotFoundError:
+            print(f"No events saved for {today_date}.")
 
 
 if __name__ == "__main__":
